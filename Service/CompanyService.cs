@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Services.Contracts;
+using Shared.DataTransferObjects;
 
 namespace Service
 {
@@ -12,6 +13,23 @@ namespace Service
     {
       _repository = repository;
       _logger = logger;
+    }
+
+    public IEnumerable<CompanyDto> GetAllCompanies(bool trackChanges)
+    {
+      try
+      {
+        var companies= _repository.Company.GetAllCompanies(trackChanges);
+        var companiesDto =
+          companies.Select(c => new CompanyDto(c.Id, c.Name ?? "", string.Join(' ', c.Address, c.Country)))
+            .ToList();
+        return companiesDto;
+      }
+      catch (Exception e)
+      {
+        _logger.LogError($"Something went wrong in the {nameof(GetAllCompanies)} service method {e}");
+        throw;
+      }
     }
   }
 }

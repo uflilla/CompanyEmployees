@@ -12,7 +12,7 @@ builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureSqlContext(builder.Configuration);
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly); // add an assembly to the set of assemblies used by ASP.NET Core MVC to discover controllers, views, tag helpers, etc.
 
 var app = builder.Build();
 

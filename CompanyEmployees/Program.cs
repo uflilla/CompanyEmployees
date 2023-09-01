@@ -1,6 +1,7 @@
 using CompanyEmployees.Extensions;
 using Contracts;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +15,18 @@ builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddControllers().AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly); // add an assembly to the set of assemblies used by ASP.NET Core MVC to discover controllers, views, tag helpers, etc.
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+  options.SuppressModelStateInvalidFilter = true;
+});
+builder.Services.AddControllers(options =>
+  {
+    options.RespectBrowserAcceptHeader = true;
+    options.ReturnHttpNotAcceptable = true;
+  })
+  .AddXmlDataContractSerializerFormatters()
+  .AddCustomCsvFormatter()
+  .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly); // add an assembly to the set of assemblies used by ASP.NET Core MVC to discover controllers, views, tag helpers, etc.
 
 var app = builder.Build();
 var logger = app.Services.GetRequiredService<ILoggerManager>();

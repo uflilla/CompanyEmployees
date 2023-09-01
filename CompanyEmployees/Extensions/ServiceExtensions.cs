@@ -1,4 +1,5 @@
-﻿using Contracts;
+﻿using CompanyEmployees.Formatter.OutputFormatter;
+using Contracts;
 using LoggerService;
 using Microsoft.EntityFrameworkCore;
 using Repository;
@@ -37,5 +38,8 @@ namespace CompanyEmployees.Extensions
     public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) =>
       services.AddDbContext<RepositoryContext>(options =>
         options.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
+
+    public static IMvcBuilder AddCustomCsvFormatter(this IMvcBuilder builder) =>
+      builder.AddMvcOptions(options => options.OutputFormatters.Add(new CsvOutputFormatter()));
   }
 }

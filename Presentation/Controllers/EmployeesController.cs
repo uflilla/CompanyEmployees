@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.ActionFilters;
 using Services.Contracts;
 using Shared.DataTransferObjects;
 
@@ -28,14 +29,16 @@ namespace Presentation.Controllers
     }
 
     [HttpPost]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> CreateEmployeeForCompany(Guid companyId, [FromBody] EmployeeForCreationDto employee)
     {
-      if (employee is null)
+      /* Replaced with validation filter attribute
+       if (employee is null)
         return BadRequest("EmployeeForCreationDto object is null");
       //ModelState.AddModelError("custom error key", "string errorMessage");
       //ModelState.AddModelError("custom error key", "string errorMessage 2");
       if (!ModelState.IsValid)
-        return UnprocessableEntity(ModelState);
+        return UnprocessableEntity(ModelState);*/
 
       var employeeToReturn =await 
         _service.EmployeeService.CreateEmployeeForCompanyAsync(companyId, employee, trackChanges: false);
@@ -51,14 +54,9 @@ namespace Presentation.Controllers
     }
 
     [HttpPut("{id:guid}")]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> UpdateEmployeeForCompany(Guid companyId, Guid id, [FromBody] EmployeeForUpdateDto employee)
     {
-      if (employee is null)
-        return BadRequest("EmployeeForUpdateDto object is null");
-
-      if (!ModelState.IsValid)
-        return UnprocessableEntity(ModelState);
-
       await _service.EmployeeService.UpdateEmployeeForCompanyAsync(companyId,id,employee,false,true);
       return NoContent();
     }

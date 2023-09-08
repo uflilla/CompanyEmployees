@@ -1,6 +1,6 @@
 ﻿namespace Shared.DataTransferObjects;
 
-public record CompanyForCreationDto: CompanyForManipulationDto
+public record CompanyForUpdateDto : CompanyForManipulationDto
 {
   public IEnumerable<EmployeeForCreationDto>? Employees { get; init; }
 }
